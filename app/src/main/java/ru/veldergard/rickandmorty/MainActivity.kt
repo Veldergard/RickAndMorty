@@ -32,6 +32,7 @@ import kotlinx.coroutines.delay
 import ru.veldergard.network.KtorClient
 import ru.veldergard.network.models.domain.Character
 import ru.veldergard.rickandmorty.screens.CharacterDetailsScreen
+import ru.veldergard.rickandmorty.screens.CharacterEpisodeScreen
 import ru.veldergard.rickandmorty.ui.theme.RickAndMortyPrimary
 import ru.veldergard.rickandmorty.ui.theme.RickAndMortyTheme
 
@@ -41,44 +42,42 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
+        enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
 
             RickAndMortyTheme {
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = RickAndMortyPrimary
-                ) {
-                    NavHost(navController = navController, startDestination = "character_details") {
-                        composable("character_details") {
-                            CharacterDetailsScreen(
-                                ktorClient = ktorClient,
-                                characterId = 1
-                            ) {
-                                navController.navigate("character_episodes/$it")
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        color = RickAndMortyPrimary
+                    ) {
+                        NavHost(navController = navController, startDestination = "character_details") {
+                            composable("character_details") {
+                                CharacterDetailsScreen(
+                                    ktorClient = ktorClient,
+                                    characterId = 1
+                                ) {
+                                    navController.navigate("character_episodes/$it")
+                                }
                             }
-                        }
 
-                        composable(
-                            route = "character_episodes/{characterId}",
-                            arguments = listOf(navArgument("characterId") { type = NavType.IntType })
-                        ) { backStackEntry ->
-                            val characterId: Int = backStackEntry.arguments?.getInt("characterId") ?: 0
-                            CharacterEpisodeScreen(characterId = characterId)
+                            composable(
+                                route = "character_episodes/{characterId}",
+                                arguments = listOf(navArgument("characterId") { type = NavType.IntType })
+                            ) { backStackEntry ->
+                                val characterId: Int = backStackEntry.arguments?.getInt("characterId") ?: 0
+                                CharacterEpisodeScreen(
+                                    characterId = characterId,
+                                    ktorClient = ktorClient
+                                )
+                            }
                         }
                     }
                 }
-//                }
             }
         }
-    }
-}
-
-@Composable
-fun CharacterEpisodeScreen(characterId: Int) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "Character episode screen: $characterId", fontSize = 28.sp)
     }
 }

@@ -12,8 +12,11 @@ import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import ru.veldergard.network.models.domain.Character
+import ru.veldergard.network.models.domain.Episode
 import ru.veldergard.network.models.remote.RemoteCharacter
+import ru.veldergard.network.models.remote.RemoteEpisode
 import ru.veldergard.network.models.remote.toDomainCharacter
+import ru.veldergard.network.models.remote.toDomainEpisode
 
 class KtorClient {
     private var client = HttpClient(OkHttp) {
@@ -42,6 +45,16 @@ class KtorClient {
                 .body<RemoteCharacter>()
                 .toDomainCharacter()
                 .also { characterCache[id] = it }
+        }
+    }
+
+    suspend fun getEpisodes(episodeIds: List<Int>): ApiOperation<List<Episode>> {
+        val idsCommaSeparated = episodeIds.joinToString(separator = ",")
+
+        return safeApiCall {
+            client.get("episode/$idsCommaSeparated")
+                .body<List<RemoteEpisode>>()
+                .map { it.toDomainEpisode() }
         }
     }
 
