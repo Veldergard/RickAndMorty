@@ -41,6 +41,7 @@ import ru.veldergard.rickandmorty.ui.theme.RickAndMortyAction
 fun CharacterDetailsScreen(
     ktorClient: KtorClient,
     characterId: Int,
+    onEpisodeClicked: (Int) -> Unit
 ) {
     var character by remember { mutableStateOf<Character?>(null) }
 
@@ -62,7 +63,6 @@ fun CharacterDetailsScreen(
     }
 
     LaunchedEffect(key1 = Unit, block = {
-        delay(500)
         ktorClient
             .getCharacter(characterId)
             .onSuccess {
@@ -128,7 +128,7 @@ fun CharacterDetailsScreen(
                     )
                     .clip(RoundedCornerShape(12.dp))
                     .clickable {
-                        // todo
+                        onEpisodeClicked(characterId)
                     }
                     .padding(vertical = 8.dp)
                     .fillMaxWidth()
