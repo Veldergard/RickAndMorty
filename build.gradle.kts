@@ -3,5 +3,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.jetbrains.kotlin.android) apply false
     alias(libs.plugins.android.library) apply false
-    kotlin("plugin.serialization") version "1.9.22" apply false
+    alias(libs.plugins.hilt.android) apply false
+    alias(libs.plugins.plugin.serialization)
+    alias(libs.plugins.kotlin.kapt)
 }

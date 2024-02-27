@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -29,6 +31,8 @@ import ru.veldergard.network.models.domain.Character
 import ru.veldergard.network.models.domain.Episode
 import ru.veldergard.rickandmorty.components.common.CharacterImage
 import ru.veldergard.rickandmorty.components.common.CharacterNameComponent
+import ru.veldergard.rickandmorty.components.common.DataPoint
+import ru.veldergard.rickandmorty.components.common.DataPointComponent
 import ru.veldergard.rickandmorty.components.common.LoadingState
 import ru.veldergard.rickandmorty.components.episode.EpisodeRowComponent
 import ru.veldergard.rickandmorty.ui.theme.RickAndMortyPrimary
@@ -62,13 +66,28 @@ fun CharacterEpisodeScreen(characterId: Int, ktorClient: KtorClient) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MainScreen(character: Character, episodes: List<Episode>) {
+    val episodeBySeasonMap = episodes.groupBy { it.seasonNumber }
+
     LazyColumn(contentPadding = PaddingValues(all = 16.dp)) {
         item { CharacterNameComponent(name = character.name) }
+        item { Spacer(modifier = Modifier.height(8.dp)) }
+        item {
+            LazyRow {
+                episodeBySeasonMap.forEach { mapEntry ->
+                    val title = "Season ${mapEntry.key}"
+                    val description = "${mapEntry.value.size} ep"
+                    item {
+                        DataPointComponent(dataPoint = DataPoint(title, description))
+                        Spacer(modifier = Modifier.width(32.dp))
+                    }
+                }
+            }
+        }
         item { Spacer(modifier = Modifier.height(16.dp)) }
         item { CharacterImage(imageUrl = character.imageUrl) }
         item { Spacer(modifier = Modifier.height(32.dp)) }
 
-        episodes.groupBy { it.seasonNumber }.forEach { mapEntry ->
+        episodeBySeasonMap.forEach { mapEntry ->
             stickyHeader { SeasonHeader(seasonNumber = mapEntry.key) }
             item { Spacer(modifier = Modifier.height(16.dp)) }
             items(mapEntry.value) { episode ->
