@@ -17,16 +17,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
-import ru.veldergard.network.KtorClient
+import androidx.hilt.navigation.compose.hiltViewModel
 import ru.veldergard.network.models.domain.Character
 import ru.veldergard.network.models.domain.Episode
 import ru.veldergard.rickandmorty.components.common.CharacterImage
@@ -37,30 +34,48 @@ import ru.veldergard.rickandmorty.components.common.LoadingState
 import ru.veldergard.rickandmorty.components.episode.EpisodeRowComponent
 import ru.veldergard.rickandmorty.ui.theme.RickAndMortyPrimary
 import ru.veldergard.rickandmorty.ui.theme.RickAndMortyTextPrimary
+import ru.veldergard.rickandmorty.viewmodels.CharacterEpisodeViewModel
+
+sealed interface CharacterEpisodeViewState {
+    data object Loading : CharacterEpisodeViewState
+
+    data class Error(
+        val message: String
+    ) : CharacterEpisodeViewState
+
+    data class Success(
+        val character: Character,
+        val characterEpisodes: List<Episode>
+    ) : CharacterEpisodeViewState
+}
 
 @Composable
-fun CharacterEpisodeScreen(characterId: Int, ktorClient: KtorClient) {
-    var characterState by remember { mutableStateOf<Character?>(null) }
-    var episodesState by remember { mutableStateOf<List<Episode>>(emptyList()) }
-
+fun CharacterEpisodeScreen(
+    characterId: Int,
+    viewModel: CharacterEpisodeViewModel = hiltViewModel()
+) {
     LaunchedEffect(key1 = Unit, block = {
-        ktorClient.getCharacter(characterId).onSuccess { character ->
-            characterState = character
-            launch {
-                ktorClient.getEpisodes(character.episodeIds).onSuccess { episodes ->
-                    episodesState = episodes
-                }.onFailure {
-                    // TODO
-                }
-            }
-        }.onFailure {
-            // TODO
-        }
+        viewModel.fetchEpisodes(characterId)
     })
 
-    characterState?.let { character ->
-        MainScreen(character = character, episodes = episodesState)
-    } ?: LoadingState()
+    val state by viewModel.stateFlow.collectAsState()
+
+    when (val viewState = state) {
+        CharacterEpisodeViewState.Loading -> {
+            LoadingState()
+        }
+
+        is CharacterEpisodeViewState.Error -> {
+            // TODO
+        }
+
+        is CharacterEpisodeViewState.Success -> {
+            MainScreen(
+                character = viewState.character,
+                episodes =  viewState.characterEpisodes
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
