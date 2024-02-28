@@ -15,18 +15,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
-import ru.veldergard.network.KtorClient
 import ru.veldergard.rickandmorty.screens.CharacterDetailsScreen
 import ru.veldergard.rickandmorty.screens.CharacterEpisodeScreen
 import ru.veldergard.rickandmorty.ui.theme.RickAndMortyPrimary
 import ru.veldergard.rickandmorty.ui.theme.RickAndMortyTheme
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var ktorClient: KtorClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,8 +54,7 @@ class MainActivity : ComponentActivity() {
                             ) { backStackEntry ->
                                 val characterId: Int = backStackEntry.arguments?.getInt("characterId") ?: 0
                                 CharacterEpisodeScreen(
-                                    characterId = characterId,
-                                    ktorClient = ktorClient
+                                    characterId = characterId
                                 )
                             }
                         }

@@ -10,9 +10,10 @@ import kotlinx.coroutines.launch
 import ru.veldergard.rickandmorty.repositories.CharacterRepository
 import ru.veldergard.rickandmorty.repositories.EpisodeRepository
 import ru.veldergard.rickandmorty.screens.CharacterEpisodeViewState
+import javax.inject.Inject
 
 @HiltViewModel
-class CharacterEpisodeViewModel(
+class CharacterEpisodeViewModel @Inject constructor(
     private val characterRepository: CharacterRepository,
     private val episodeRepository: EpisodeRepository
 ) : ViewModel() {
