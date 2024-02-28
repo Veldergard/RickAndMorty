@@ -1,5 +1,6 @@
 package ru.veldergard.rickandmorty.components.common
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
@@ -13,7 +14,7 @@ private val defaultModifier = Modifier
     .padding(all = 128.dp)
 
 @Composable
-fun LoadingState(modifier: Modifier = defaultModifier) {
+fun LoadingState(@SuppressLint("ModifierParameter") modifier: Modifier = defaultModifier) {
     CircularProgressIndicator(
         modifier = modifier,
         color = RickAndMortyAction
