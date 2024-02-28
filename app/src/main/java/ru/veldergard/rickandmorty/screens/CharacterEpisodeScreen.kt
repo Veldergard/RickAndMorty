@@ -50,11 +50,11 @@ fun CharacterEpisodeScreen(characterId: Int, ktorClient: KtorClient) {
                 ktorClient.getEpisodes(character.episodeIds).onSuccess { episodes ->
                     episodesState = episodes
                 }.onFailure {
-                    // todo
+                    // TODO
                 }
             }
         }.onFailure {
-            // todo
+            // TODO
         }
     })
 

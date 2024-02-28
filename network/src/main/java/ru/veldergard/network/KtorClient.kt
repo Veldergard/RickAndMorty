@@ -48,7 +48,7 @@ class KtorClient {
         }
     }
 
-    suspend fun getEpisode(episodeId: Int): ApiOperation<Episode> {
+    private suspend fun getEpisode(episodeId: Int): ApiOperation<Episode> {
         return safeApiCall {
             client.get("episode/$episodeId")
                 .body<RemoteEpisode>()
@@ -62,9 +62,7 @@ class KtorClient {
                 listOf(it)
             }
         } else {
-
             val idsCommaSeparated = episodeIds.joinToString(separator = ",")
-
             safeApiCall {
                 client.get("episode/$idsCommaSeparated")
                     .body<List<RemoteEpisode>>()
